@@ -24,13 +24,13 @@ namespace osu.Game.Rulesets.Taiko.Mods
         /// How far away from the hit target should hitobjects start to fade out.
         /// Range: [0, 1]
         /// </summary>
-        private const float fade_out_start_time = 1f;
+        public float FadeOutStartTime = 1f;
 
         /// <summary>
         /// How long hitobjects take to fade out, in terms of the scrolling length.
         /// Range: [0, 1]
         /// </summary>
-        private const float fade_out_duration = 0.375f;
+        public float FadeOutDuration = 0.375f;
 
         private DrawableTaikoRuleset drawableRuleset;
 
@@ -51,8 +51,8 @@ namespace osu.Game.Rulesets.Taiko.Mods
                 case DrawableDrumRollTick _:
                 case DrawableHit _:
                     double preempt = drawableRuleset.TimeRange.Value / drawableRuleset.ControlPointAt(hitObject.HitObject.StartTime).Multiplier;
-                    double start = hitObject.HitObject.StartTime - preempt * fade_out_start_time;
-                    double duration = preempt * fade_out_duration;
+                    double start = hitObject.HitObject.StartTime - preempt * FadeOutStartTime;
+                    double duration = preempt * FadeOutDuration;
 
                     using (hitObject.BeginAbsoluteSequence(start))
                     {

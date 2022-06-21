@@ -34,6 +34,7 @@ namespace osu.Game.Rulesets.Taiko.UI
         /// </summary>
         public const float DEFAULT_HEIGHT = 200;
 
+        public Container PlayfieldContainer;
         private Container<HitExplosion> hitExplosionContainer;
         private Container<KiaiHitExplosion> kiaiExplosionContainer;
         private JudgementContainer<DrawableTaikoJudgement> judgementContainer;
@@ -92,7 +93,7 @@ namespace osu.Game.Rulesets.Taiko.UI
                             Children = new Drawable[]
                             {
                                 barLinePlayfield = new BarLinePlayfield(),
-                                new Container
+                                PlayfieldContainer = new Container
                                 {
                                     Name = "Hit objects",
                                     RelativeSizeAxes = Axes.Both,
