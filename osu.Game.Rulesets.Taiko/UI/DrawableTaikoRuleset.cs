@@ -25,13 +25,15 @@ using osu.Game.Scoring;
 using osu.Game.Skinning;
 using osuTK;
 
+using osu.Framework.Logging;
+
 namespace osu.Game.Rulesets.Taiko.UI
 {
     public partial class DrawableTaikoRuleset : DrawableScrollingRuleset<TaikoHitObject>
     {
         public new BindableDouble TimeRange => base.TimeRange;
 
-        public readonly BindableBool LockPlayfieldMaxAspect = new BindableBool(true);
+        public readonly BindableBool LockPlayfieldAspectRange = new BindableBool(true);
 
         protected override ScrollVisualisationMethod VisualisationMethod => ScrollVisualisationMethod.Overlapping;
 
@@ -66,10 +68,14 @@ namespace osu.Game.Rulesets.Taiko.UI
             // Taiko scrolls at a constant 100px per 1000ms. More notes become visible as the playfield is lengthened.
             const float scroll_rate = 10;
 
-            // Since the time range will depend on a positional value, it is referenced to the x480 pixel space.
-            float ratio = DrawHeight / 480;
+            float realRatio = ChildSize.X / ChildSize.Y;
+            float ratio = DrawSize.X / 480 / TaikoPlayfieldAdjustmentContainer.MAXIMUM_ASPECT;
+
+            if (realRatio < TaikoPlayfieldAdjustmentContainer.MAXIMUM_ASPECT)
+                ratio = Math.Clamp(DrawSize.Y / 480, TaikoPlayfieldAdjustmentContainer.MINIMUM_ASPECT, TaikoPlayfieldAdjustmentContainer.MAXIMUM_ASPECT);
 
             TimeRange.Value = (Playfield.HitObjectContainer.DrawWidth / ratio) * scroll_rate;
+            Logger.Log($"[!!] x: {DrawSize.X / 480 / TaikoPlayfieldAdjustmentContainer.MAXIMUM_ASPECT}, y: {DrawSize.Y / 480}, time: {TimeRange.Value}");
         }
 
         protected override void UpdateAfterChildren()
@@ -90,7 +96,7 @@ namespace osu.Game.Rulesets.Taiko.UI
 
         public override PlayfieldAdjustmentContainer CreatePlayfieldAdjustmentContainer() => new TaikoPlayfieldAdjustmentContainer
         {
-            LockPlayfieldMaxAspect = { BindTarget = LockPlayfieldMaxAspect }
+            LockPlayfieldAspectRange = { BindTarget = LockPlayfieldAspectRange }
         };
 
         protected override PassThroughInputManager CreateInputManager() => new TaikoInputManager(Ruleset.RulesetInfo);
